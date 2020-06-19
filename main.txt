@@ -1,0 +1,31 @@
+//@version=4
+study(title="Adam's RSI", shorttitle="RSI", format=format.price, precision=2, resolution="")
+src = input(close, title="Source")
+rsi_len = input(14, minval=1, title="RSI Length")
+rsi_fast_len = input(5, minval=1, title="RSI Fast Length")
+rsi_ema_len = input(14, minval=1, title="RSI EMA Length")
+overbought = input(70, minval=1, title="Overbought")
+oversold = input(30, minval=1, title="OverSold")
+
+//up = rma(max(change(src), 0), len)
+//down = rma(-min(change(src), 0), len)
+//rsi = down == 0 ? 100 : up == 0 ? 0 : 100 - (100 / (1 + up / down))
+rsi = rsi(src,rsi_len)
+rsi_fast = rsi(src,rsi_fast_len)
+rsi_ema = ema(rsi, rsi_ema_len)
+
+
+color_short = color.red
+color_long = color.blue
+color_neutral = color.yellow
+
+
+p_rsi = plot(rsi, title="RSI", style=plot.style_line, transp=0, linewidth=3, color=rsi > 50 ? color.aqua : color.white)
+p_rsi_fast = plot(rsi_fast, title="Fast RSI", style=plot.style_line, linewidth=2, transp=100, color=color.silver)
+p_rsi_ema = plot(rsi_ema, title="RSI EMA", style=plot.style_line, linewidth=1, transp=20, color=color.silver)
+fill(p_rsi_ema, p_rsi_fast, color = rsi_fast > rsi_ema ? color_long : color_short, transp=60, title="RSI Cloud Fill")
+
+
+p_ob = plot(overbought, title="RSI Overbought", style=plot.style_line, transp=50, linewidth=1, color=color.white)
+p_os = plot(oversold, title="RSI Oversold", style=plot.style_line, transp=50, linewidth=1, color=color.white)
+p_base = plot(50, title="Baseline", style=plot.style_line, transp=10, linewidth=1, color=color.silver)
